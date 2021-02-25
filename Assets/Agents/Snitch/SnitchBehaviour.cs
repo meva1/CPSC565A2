@@ -23,7 +23,7 @@ public class SnitchBehaviour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Vector3 forceDir = new Vector3((float)rng.NextDouble()*2-1, (float)rng.NextDouble()*2-1, (float)rng.NextDouble()*2-1);
+        Vector3 forceDir = new Vector3((float)rng.NextDouble()-1, (float)rng.NextDouble()-1, (float)rng.NextDouble()-1);
         snitch.AddForce(forceDir);
     }
 }

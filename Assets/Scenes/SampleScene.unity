@@ -265,7 +265,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ad597b75dcf0f046bc870ed34708175, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  seed: 88
+  seed: 7
   snitch: {fileID: 0}
 --- !u!135 &714246873
 SphereCollider:
@@ -299,7 +299,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 48fbe56f8c9577a448a024c9cb92952c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

@@ -2,10 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : MonoBehaviour
+public class GriffindorPlayer : MonoBehaviour
 {
-    public int seed;
-    private System.Random rng;
+
+
     public Rigidbody physicsBody;
     public GameObject snitch;
     private float maxSpeed;
@@ -14,9 +14,8 @@ public class Player : MonoBehaviour
 
     private void Awake()
     {
-        maxSpeed = 10f;
-        seed = 2;
-        rng = new System.Random(seed);
+        maxSpeed = 5f;
+
         // Extract rigid body
         physicsBody = GetComponent<Rigidbody>();
         //snitch = GetComponent<Rigidbody>;
@@ -45,7 +44,7 @@ public class Player : MonoBehaviour
 
     void OnCollisionEnter(Collision col)
     {
-        if(col.gameObject.name == "snitch")
+        if (col.gameObject.name == "snitch")
         {
             physicsBody.transform.position = new Vector3(2, 2, 2);
         }

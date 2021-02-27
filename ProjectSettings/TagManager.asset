@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Griffindor
   - Slytherin
+  - Wall
   layers:
   - Default
   - TransparentFX

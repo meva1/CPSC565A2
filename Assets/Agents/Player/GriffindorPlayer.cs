@@ -12,30 +12,26 @@ public class GriffindorPlayer : MonoBehaviour
     private GameObject[] enemies;
     private GameObject[] friends;
     private float maxForce;
+    private double meanMass;
+    private double stddevMass;
+    private System.Random rng;
 
 
 
     private void Awake()
     {
         maxSpeed = 10f;
-        maxForce = 0.2f;
-        
-
-
-        // Extract rigid body
+        maxForce = 2f;
+        meanMass = 50f;
+        stddevMass = 10f;
         player = GetComponent<Rigidbody>();
-        //snitch = GetComponent<Rigidbody>;
+        rng = new System.Random();
+        player.mass = (float)SampleGaussian(rng, meanMass, stddevMass);
     }
     // Start is called before the first frame update
     void Start()
     {
-        player.mass = 0.1f;
 
-        //GameObject[] walls = GameObject.FindGameObjectsWithTag("Wall");
-        //foreach (GameObject wall in walls)
-        //{
-        //    Debug.Log(wall.transform.position);
-        //}
     }
 
     // Update is called once per frame
@@ -45,7 +41,7 @@ public class GriffindorPlayer : MonoBehaviour
         float dist = Vector3.Distance(transform.position, snitch.transform.position);
         Vector3 dir = (snitch.transform.position - transform.position);
         dir.Normalize();
-        player.AddForce(dir * dist);
+        player.AddForce(100*dir * dist);
 
         RepellWalls();
         RepellEnemies();
@@ -70,14 +66,14 @@ public class GriffindorPlayer : MonoBehaviour
     {
         // add a repulsive force from each wall that scales with 1/r^2
 
-        float xPos = -1 / ((25 - player.transform.position.x) * (25 - player.transform.position.x));
-        float xNeg = 1 / ((-25 - player.transform.position.x) * (-25 - player.transform.position.x));
+        float xPos = -1 / ((25 - player.transform.position.x));
+        float xNeg = 1 / ((-25 - player.transform.position.x));
 
-        float zPos = -1 / ((25 - player.transform.position.z) * (25 - player.transform.position.z));
-        float zNeg = 1 / ((-25 - player.transform.position.z) * (-25 - player.transform.position.z));
+        float zPos = -1 / ((25 - player.transform.position.z));
+        float zNeg = 1 / ((-25 - player.transform.position.z));
 
-        float yPos = -1 / ((25 - player.transform.position.y) * (25 - player.transform.position.y));
-        float yNeg = 1 / ((0 - player.transform.position.y) * (0 - player.transform.position.y));
+        float yPos = -1 / ((25 - player.transform.position.y));
+        float yNeg = 1 / ((0 - player.transform.position.y));
 
         Vector3 forceDir = new Vector3(xPos + xNeg, yPos + yNeg, zPos + zNeg);
         player.AddForce(forceDir);
@@ -111,6 +107,17 @@ public class GriffindorPlayer : MonoBehaviour
                 player.AddForce(dir);
             }
         }
+    }
+
+    double SampleGaussian(System.Random rng, double mean, double stddev)
+    {
+        // The method requires sampling from a uniform random of (0,1]
+        // but Random.NextDouble() returns a sample of [0,1).
+        double x1 = 1 - rng.NextDouble();
+        double x2 = 1 - rng.NextDouble();
+
+        double y1 = System.Math.Sqrt(-2.0 * System.Math.Log(x1)) * System.Math.Cos(2.0 * System.Math.PI * x2);
+        return y1 * stddev + mean;
     }
 
 

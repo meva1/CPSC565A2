@@ -15,8 +15,8 @@ GameObject:
   - component: {fileID: 4731630898686485494}
   - component: {fileID: 9025686610926284752}
   m_Layer: 0
-  m_Name: SyltherinPlayer
-  m_TagString: Untagged
+  m_Name: SlytherinPlayer
+  m_TagString: Slytherin
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -109,7 +109,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc0ff432280207843b6893dd5b983f90, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  physicsBody: {fileID: 0}
+  player: {fileID: 0}
   snitch: {fileID: 0}
 --- !u!54 &9025686610926284752
 Rigidbody:

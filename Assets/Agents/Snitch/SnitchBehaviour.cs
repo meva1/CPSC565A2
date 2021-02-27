@@ -14,21 +14,26 @@ public class SnitchBehaviour : MonoBehaviour
 
     void Awake()
     {
+        seed = 8;
         scoreGriffindor = 0;
         scoreSlytherin = 0;
-        maxSpeed = 50f;
+        maxSpeed = 10f;
         rng = new System.Random(seed);
+
+
     }
 
     // Start is called before the first frame update
     void Start()
     {
         snitch = GetComponent<Rigidbody>();
+        snitch.mass = 0.2f;
     }
 
     // Update is called once per frame
     void Update()
     {
+        
         Vector3 forceDir = new Vector3((float)rng.NextDouble()*2-1, (float)rng.NextDouble()*2-1, (float)rng.NextDouble()*2-1);
         snitch.AddForce(forceDir);
 
@@ -38,6 +43,7 @@ public class SnitchBehaviour : MonoBehaviour
         {
             snitch.velocity = Vector3.ClampMagnitude(snitch.velocity, maxSpeed);
         }
+        
     }
 
     void RepellWalls()

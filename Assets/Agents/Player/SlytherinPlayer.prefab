@@ -109,7 +109,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc0ff432280207843b6893dd5b983f90, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
   snitch: {fileID: 0}
 --- !u!54 &9025686610926284752
 Rigidbody:

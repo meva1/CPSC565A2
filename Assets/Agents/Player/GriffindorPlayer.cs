@@ -6,17 +6,20 @@ public class GriffindorPlayer : MonoBehaviour
 {
 
 
-    public Rigidbody player;
+    private Rigidbody player;
     public GameObject snitch;
     private float maxSpeed;
     private GameObject[] enemies;
     private GameObject[] friends;
+    private float maxForce;
 
 
 
     private void Awake()
     {
-        maxSpeed = 5f;
+        maxSpeed = 10f;
+        maxForce = 0.2f;
+        
 
 
         // Extract rigid body
@@ -26,7 +29,8 @@ public class GriffindorPlayer : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        player.mass = 1f;
+        player.mass = 0.1f;
+
         //GameObject[] walls = GameObject.FindGameObjectsWithTag("Wall");
         //foreach (GameObject wall in walls)
         //{
@@ -66,14 +70,14 @@ public class GriffindorPlayer : MonoBehaviour
     {
         // add a repulsive force from each wall that scales with 1/r^2
 
-        float xPos = -1 / ((25 - player.transform.position.x) * (25 - player.transform.position.x) * (25 - player.transform.position.x));
-        float xNeg = 1 / ((-25 - player.transform.position.x) * (-25 - player.transform.position.x) * (-25 - player.transform.position.x));
+        float xPos = -1 / ((25 - player.transform.position.x) * (25 - player.transform.position.x));
+        float xNeg = 1 / ((-25 - player.transform.position.x) * (-25 - player.transform.position.x));
 
-        float zPos = -1 / ((25 - player.transform.position.z) * (25 - player.transform.position.z) * (25 - player.transform.position.z));
-        float zNeg = 1 / ((-25 - player.transform.position.z) * (-25 - player.transform.position.z) * (-25 - player.transform.position.z));
+        float zPos = -1 / ((25 - player.transform.position.z) * (25 - player.transform.position.z));
+        float zNeg = 1 / ((-25 - player.transform.position.z) * (-25 - player.transform.position.z));
 
-        float yPos = -1 / ((25 - player.transform.position.y) * (25 - player.transform.position.y) * (25 - player.transform.position.y));
-        float yNeg = 1 / ((0 - player.transform.position.y) * (0 - player.transform.position.y) * (0 - player.transform.position.y));
+        float yPos = -1 / ((25 - player.transform.position.y) * (25 - player.transform.position.y));
+        float yNeg = 1 / ((0 - player.transform.position.y) * (0 - player.transform.position.y));
 
         Vector3 forceDir = new Vector3(xPos + xNeg, yPos + yNeg, zPos + zNeg);
         player.AddForce(forceDir);
@@ -87,7 +91,8 @@ public class GriffindorPlayer : MonoBehaviour
             float dist = Vector3.Distance(transform.position, enemy.transform.position);
             Vector3 dir = (transform.position - enemy.transform.position );
             dir.Normalize();
-            player.AddForce(dir * (1/(dist*dist)));
+            dir = maxForce*dir;
+            player.AddForce(dir);
         }
     }
 
@@ -98,11 +103,12 @@ public class GriffindorPlayer : MonoBehaviour
         {
             if (friend.transform != player.transform)
             {
-
+                //Debug.Log("Griffindor friend found");
                 float dist = Vector3.Distance(transform.position, friend.transform.position);
                 Vector3 dir = (transform.position - friend.transform.position);
                 dir.Normalize();
-                player.AddForce(dir * (1 / dist));
+                dir = maxForce*dir;
+                player.AddForce(dir);
             }
         }
     }

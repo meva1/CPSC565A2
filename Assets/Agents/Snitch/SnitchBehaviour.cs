@@ -15,14 +15,12 @@ public class SnitchBehaviour : MonoBehaviour
 
     void Awake()
     {
+        rng = new System.Random();
         snitch = GetComponent<Rigidbody>();
-        meanMass = 10f;
-        stddevMass = 5f;
         scoreGriffindor = 0;
         scoreSlytherin = 0;
         maxSpeed = 50f;
-        rng = new System.Random();
-        snitch.mass = (float)SampleGaussian(rng, meanMass, stddevMass);
+        snitch.mass = 0.3f;
 
     }
 
@@ -38,7 +36,7 @@ public class SnitchBehaviour : MonoBehaviour
     {
         
         Vector3 forceDir = new Vector3((float)rng.NextDouble()*2-1, (float)rng.NextDouble()*2-1, (float)rng.NextDouble()*2-1);
-        snitch.AddForce(forceDir*10);
+        snitch.AddForce(forceDir);
 
         RepellWalls();
 
@@ -68,15 +66,19 @@ public class SnitchBehaviour : MonoBehaviour
 
     void OnCollisionEnter(Collision col)
     {
-        if (col.gameObject.name == "GriffindorPlayer")
+        if (col.gameObject.tag == "Griffindor")
         {
             scoreGriffindor += 1;
             Debug.Log("Griffindor");
         }
-        if (col.gameObject.name == "SlytherinPlayer")
+        else if (col.gameObject.tag == "Slytherin")
         {
             scoreSlytherin += 1;
             Debug.Log("Slytherin");
+        }
+        else
+        {
+            Debug.Log("Other object not registered");
         }
     }
 

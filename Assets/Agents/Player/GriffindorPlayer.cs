@@ -8,30 +8,36 @@ public class GriffindorPlayer : MonoBehaviour
 
     private Rigidbody player;
     public GameObject snitch;
-    private float maxSpeed;
+    public double maxSpeed;
+    public double aggressiveness;
+    public double maxExhaustion;
+    public double exhaustion;
+
+    private float maxRepellEnemyForce;
+    private float maxRepellFriendForce;
+    private float maxRepellWallForce;
+    public float snitchAttractModifier;
+
     private GameObject[] enemies;
     private GameObject[] friends;
-    private float maxForce;
-    private double meanMass;
-    private double stddevMass;
-    private System.Random rng;
+    private GameObject[] snitchTag;
 
 
 
     private void Awake()
     {
-        maxSpeed = 10f;
-        maxForce = 2f;
-        meanMass = 50f;
-        stddevMass = 10f;
         player = GetComponent<Rigidbody>();
-        rng = new System.Random();
-        player.mass = (float)SampleGaussian(rng, meanMass, stddevMass);
+        maxRepellEnemyForce = 10f;
+        maxRepellFriendForce = 10f;
+        maxRepellWallForce = 10f;
+
     }
     // Start is called before the first frame update
     void Start()
     {
-
+        snitchTag = GameObject.FindGameObjectsWithTag("snitch");
+        snitch = snitchTag[0];
+        snitchAttractModifier = 10f;
     }
 
     // Update is called once per frame
@@ -41,7 +47,7 @@ public class GriffindorPlayer : MonoBehaviour
         float dist = Vector3.Distance(transform.position, snitch.transform.position);
         Vector3 dir = (snitch.transform.position - transform.position);
         dir.Normalize();
-        player.AddForce(100*dir * dist);
+        player.AddForce(snitchAttractModifier*dir * dist);
 
         RepellWalls();
         RepellEnemies();
@@ -49,9 +55,10 @@ public class GriffindorPlayer : MonoBehaviour
 
         if (player.velocity.magnitude > maxSpeed)
         {
-            player.velocity = Vector3.ClampMagnitude(player.velocity, maxSpeed);
+            player.velocity = Vector3.ClampMagnitude(player.velocity, (float)maxSpeed);
         }
-       
+
+        //CheckEscape();
     }
 
     void OnCollisionEnter(Collision col)
@@ -87,7 +94,7 @@ public class GriffindorPlayer : MonoBehaviour
             float dist = Vector3.Distance(transform.position, enemy.transform.position);
             Vector3 dir = (transform.position - enemy.transform.position );
             dir.Normalize();
-            dir = maxForce*dir;
+            dir = maxRepellEnemyForce*dir;
             player.AddForce(dir);
         }
     }
@@ -103,7 +110,7 @@ public class GriffindorPlayer : MonoBehaviour
                 float dist = Vector3.Distance(transform.position, friend.transform.position);
                 Vector3 dir = (transform.position - friend.transform.position);
                 dir.Normalize();
-                dir = maxForce*dir;
+                dir = maxRepellFriendForce*dir;
                 player.AddForce(dir);
             }
         }
@@ -120,5 +127,12 @@ public class GriffindorPlayer : MonoBehaviour
         return y1 * stddev + mean;
     }
 
+    void CheckEscape()
+    {
+        if (player.transform.position.x > 26 || player.transform.position.x < -26 || player.transform.position.y > 26 || player.transform.position.y < -1 || player.transform.position.z > 26 || player.transform.position.z < -26)
+        {
+            player.transform.position = new Vector3(0, 12.5f, 0);
+        }
+    }
 
 }

@@ -6,32 +6,34 @@ public class SlytherinPlayer : MonoBehaviour
 {
     private Rigidbody player;
     public GameObject snitch;
-    private float maxSpeed;
+    public double maxSpeed;
+    public double aggressiveness;
+    public double maxExhaustion;
+    public double exhaustion;
+
+    private float maxRepellEnemyForce;
+    private float maxRepellFriendForce;
+    private float maxRepellWallForce;
+    public float snitchAttractModifier;
+
     private GameObject[] enemies;
     private GameObject[] friends;
-    private float maxForce;
-    private double meanMass;
-    private double stddevMass;
-    private System.Random rng;
+    private GameObject[] snitchTag;
 
 
 
 
     private void Awake()
     {
-        maxSpeed = 10f;
-        maxForce = 0.01f;
-        meanMass = 50f;
-        stddevMass = 10f;
         player = GetComponent<Rigidbody>();
-        rng = new System.Random();
-        player.mass = (float)SampleGaussian(rng, meanMass, stddevMass);
-
+        
     }
     // Start is called before the first frame update
     void Start()
     {
-        
+        snitchTag = GameObject.FindGameObjectsWithTag("snitch");
+        snitch = snitchTag[0];
+        snitchAttractModifier = 10f;
     }
 
     // Update is called once per frame
@@ -40,7 +42,7 @@ public class SlytherinPlayer : MonoBehaviour
         float dist = Vector3.Distance(transform.position, snitch.transform.position);
         Vector3 dir = (snitch.transform.position - transform.position);
         dir.Normalize();
-        player.AddForce(dir * dist);
+        player.AddForce(snitchAttractModifier*dir * dist);
 
         RepellWalls();
         RepellFriends();
@@ -48,8 +50,10 @@ public class SlytherinPlayer : MonoBehaviour
 
         if (player.velocity.magnitude > maxSpeed)
         {
-            player.velocity = Vector3.ClampMagnitude(player.velocity, maxSpeed);
+            player.velocity = Vector3.ClampMagnitude(player.velocity, (float)maxSpeed);
         }
+
+        //CheckEscape();
 
 
     }
@@ -62,11 +66,11 @@ public class SlytherinPlayer : MonoBehaviour
         }
         else if(col.gameObject.name == "SlytherinPlayer")
         {
-            Debug.Log("Slytherin on Slytherin Violence");
+            //Debug.Log("Slytherin on Slytherin Violence");
         }
         else
         {
-            Debug.Log("Slytherin on Griffindor Violence");
+            //Debug.Log("Slytherin on Griffindor Violence");
         }
     }
 
@@ -98,7 +102,7 @@ public class SlytherinPlayer : MonoBehaviour
                 float dist = Vector3.Distance(transform.position, friend.transform.position);
                 Vector3 dir = (transform.position - friend.transform.position);
                 dir.Normalize();
-                player.AddForce(dir * (maxForce));
+                player.AddForce(dir * (maxRepellFriendForce));
             }
         }
     }
@@ -111,7 +115,7 @@ public class SlytherinPlayer : MonoBehaviour
                 float dist = Vector3.Distance(transform.position, enemy.transform.position);
                 Vector3 dir = (transform.position - enemy.transform.position);
                 dir.Normalize();
-                player.AddForce(dir * (maxForce));
+                player.AddForce(dir * (maxRepellEnemyForce));
             
         }
     }
@@ -125,5 +129,13 @@ public class SlytherinPlayer : MonoBehaviour
 
         double y1 = System.Math.Sqrt(-2.0 * System.Math.Log(x1)) * System.Math.Cos(2.0 * System.Math.PI * x2);
         return y1 * stddev + mean;
+    }
+
+    void CheckEscape()
+    {
+        if (player.transform.position.x > 26 || player.transform.position.x < -26 || player.transform.position.y > 26 || player.transform.position.y < -1 || player.transform.position.z > 26 || player.transform.position.z < -26)
+        {
+            player.transform.position = new Vector3(0, 12.5f, 0);
+        }
     }
 }

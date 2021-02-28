@@ -20,7 +20,7 @@ public class SnitchBehaviour : MonoBehaviour
         scoreGriffindor = 0;
         scoreSlytherin = 0;
         maxSpeed = 50f;
-        snitch.mass = 0.3f;
+        snitch.mass = 3f;
 
     }
 
@@ -78,7 +78,7 @@ public class SnitchBehaviour : MonoBehaviour
         }
         else
         {
-            Debug.Log("Other object not registered");
+            Debug.Log("Wall collision");
         }
     }
 

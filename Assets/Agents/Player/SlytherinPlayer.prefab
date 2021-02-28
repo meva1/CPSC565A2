@@ -95,7 +95,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
+  m_Size: {x: 2, y: 2, z: 2}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &4731630898686485494
 MonoBehaviour:
@@ -110,6 +110,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   snitch: {fileID: 0}
+  maxSpeed: 0
+  aggressiveness: 0
+  maxExhaustion: 0
+  exhaustion: 0
+  snitchAttractModifier: 0
 --- !u!54 &9025686610926284752
 Rigidbody:
   m_ObjectHideFlags: 0

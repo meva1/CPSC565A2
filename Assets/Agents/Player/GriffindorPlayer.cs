@@ -22,6 +22,12 @@ public class GriffindorPlayer : MonoBehaviour
     private GameObject[] friends;
     private GameObject[] snitchTag;
 
+    private bool unconscious;
+    private int exhaustCounter;
+
+    private float wakeUpTime;
+    private float unconsciousTime;
+
 
 
     private void Awake()
@@ -37,25 +43,32 @@ public class GriffindorPlayer : MonoBehaviour
     {
         snitchTag = GameObject.FindGameObjectsWithTag("snitch");
         snitch = snitchTag[0];
-        snitchAttractModifier = 10f;
+        snitchAttractModifier = 5f;
+        unconscious = false;
+        exhaustCounter = 0;
+        wakeUpTime = 0;
+        unconsciousTime = 10f;
     }
 
     // Update is called once per frame
     void Update()
     {
-
-        float dist = Vector3.Distance(transform.position, snitch.transform.position);
-        Vector3 dir = (snitch.transform.position - transform.position);
-        dir.Normalize();
-        player.AddForce(snitchAttractModifier*dir * dist);
-
-        RepellWalls();
-        RepellEnemies();
-        RepellFriends();
-
-        if (player.velocity.magnitude > maxSpeed)
+        CheckExhaustion();
+        if (!unconscious)
         {
-            player.velocity = Vector3.ClampMagnitude(player.velocity, (float)maxSpeed);
+            float dist = Vector3.Distance(transform.position, snitch.transform.position);
+            Vector3 dir = (snitch.transform.position - transform.position);
+            dir.Normalize();
+            player.AddForce(snitchAttractModifier * dir * dist);
+
+            RepellWalls();
+            RepellEnemies();
+            RepellFriends();
+
+            if (player.velocity.magnitude > maxSpeed)
+            {
+                player.velocity = Vector3.ClampMagnitude(player.velocity, (float)maxSpeed);
+            }
         }
 
         //CheckEscape();
@@ -94,7 +107,7 @@ public class GriffindorPlayer : MonoBehaviour
             float dist = Vector3.Distance(transform.position, enemy.transform.position);
             Vector3 dir = (transform.position - enemy.transform.position );
             dir.Normalize();
-            dir = maxRepellEnemyForce*dir;
+            //dir = maxRepellEnemyForce*dir;
             player.AddForce(dir);
         }
     }
@@ -110,7 +123,7 @@ public class GriffindorPlayer : MonoBehaviour
                 float dist = Vector3.Distance(transform.position, friend.transform.position);
                 Vector3 dir = (transform.position - friend.transform.position);
                 dir.Normalize();
-                dir = maxRepellFriendForce*dir;
+                //dir = maxRepellFriendForce*dir;
                 player.AddForce(dir);
             }
         }
@@ -132,6 +145,28 @@ public class GriffindorPlayer : MonoBehaviour
         if (player.transform.position.x > 26 || player.transform.position.x < -26 || player.transform.position.y > 26 || player.transform.position.y < -1 || player.transform.position.z > 26 || player.transform.position.z < -26)
         {
             player.transform.position = new Vector3(0, 12.5f, 0);
+        }
+    }
+
+    void CheckExhaustion()
+    {
+
+        if (exhaustCounter > 100)
+        {
+            exhaustCounter = 0;
+            exhaustion++;
+        }
+        if (!unconscious && exhaustion > maxExhaustion)
+        {
+            unconscious = true;
+            player.GetComponent<Rigidbody>().useGravity = true;
+            wakeUpTime = Time.time + unconsciousTime;
+        }
+        if (unconscious && Time.time > wakeUpTime)
+        {
+            unconscious = false;
+            exhaustion = 0;
+            player.GetComponent<Rigidbody>().useGravity = false;
         }
     }
 

@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 3074936160378919751}
   - component: {fileID: 3074936160378919748}
   - component: {fileID: 3074936160378919754}
+  - component: {fileID: 154604704805454720}
   m_Layer: 0
   m_Name: snitch
   m_TagString: Untagged
@@ -112,3 +113,18 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &154604704805454720
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3074936160378919755}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ad597b75dcf0f046bc870ed34708175, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  snitch: {fileID: 0}
+  scoreGriffindor: 0
+  scoreSlytherin: 0

@@ -17,7 +17,7 @@ The snitch moves around the area randomly and also feels a force pushing it away
 
 Players
 
-There are two teams, Griffindor and Slytherin, each represented by the GriffindorPlayer and SlytherinPlayer prefab pieces. The bahaviour of these pieces are determined by the scripts GriffindorPlayer and SlytherinPlayer. The players are all initialized by the PlayerGenerator script.
+There are two teams, Griffindor and Slytherin, each represented by the GriffindorPlayer and SlytherinPlayer prefab pieces. The bahaviour of these pieces are determined by the scripts GriffindorPlayer and SlytherinPlayer. The players are all initialized by the PlayerGenerator script. Relevant player information can be seen in the inspector listed inside the section for the associated script. However the player mass will be visible in the Rigidbody component.
 
 PlayerGenerator Script
 
@@ -37,9 +37,18 @@ An unconscious player will fall to the ground and remain there for 10 seconds. T
 
 Additional Player Traits
 
-The two additional player traits added are blocking and violent. For the blocking trait, each team member that is not closest to the snitch will target the closest opponent to the snitch and move in its direction to hopefully initiate a collision. This would allow that team's closest member to the snitch a little more room and freedom from colliding with the other team's closest player. The violent player trait will cause a team's players to almost entirely ignore the snitch and instead move towards the other teams nearest player to attempt to initiate a collision. 
+The two additional player traits added are blocking and violent. For the blocking trait, each team member that is not closest to the snitch will target the closest opponent to the snitch and move in its direction to hopefully initiate a collision. This would allow that team's closest member to the snitch a little more room and freedom from colliding with the other team's closest player. The violent player trait will cause a team's players to almost entirely ignore the snitch and instead move towards the other teams nearest player to attempt to initiate a collision. These player traits are defaulted to off by can be turned on by changing the violent and blocking boolean values to true inside the SlytherinPlayer or GriffindorPlayer scripts.
 
 Scoreboard UI
 
 The scoreboard is implemented via text displayed to the screen via the text UI components with an attached script to access the score which is held within the snitch.
+
+
+References: 
+
+Unity documentation https://docs.unity3d.com/Manual/index.html
+
+The SampleGaussian function used in PlayerGenerator was taken from https://gist.github.com/tansey/1444070
+
+Camera control script taken from https://gist.github.com/McFunkypants/5a9dad582461cb8d9de3
 

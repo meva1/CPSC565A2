@@ -52,7 +52,7 @@ public class SlytherinPlayer : MonoBehaviour
         unconsciousTime = 10f;
         rng = new System.Random();
         blocking = false;
-        violent = true;
+        violent = false;
     }
 
     // Update is called once per frame
@@ -106,7 +106,7 @@ public class SlytherinPlayer : MonoBehaviour
         {
             Debug.Log("Slytherin on Slytherin Violence");
             rand = rng.NextDouble();
-            if(rand >= 0.25)
+            if(rand >= 0.025)
             {
                 CollisionUnconscious();
             }

@@ -54,7 +54,7 @@ public class GriffindorPlayer : MonoBehaviour
         unconsciousTime = 10f;
         rng = new System.Random();
         blocking = false;
-        violent = true;
+        violent = false;
     }
 
     // Update is called once per frame
@@ -98,9 +98,15 @@ public class GriffindorPlayer : MonoBehaviour
 
     void OnCollisionEnter(Collision col)
     {
-        if (col.gameObject.name == "snitch")
+        if (col.gameObject.tag == "Griffindor")
         {
-            player.transform.position = new Vector3(2, 2, 2);
+            Debug.Log("Griffindor on Griffindor Violence");
+            rand = rng.NextDouble();
+            if (rand >= 0.025)
+            {
+                CollisionUnconscious();
+            }
+
         }
     }
 

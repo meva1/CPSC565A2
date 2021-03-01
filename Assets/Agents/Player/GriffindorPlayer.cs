@@ -13,9 +13,6 @@ public class GriffindorPlayer : MonoBehaviour
     public double maxExhaustion;
     public double exhaustion;
 
-    private float maxRepellEnemyForce;
-    private float maxRepellFriendForce;
-    private float maxRepellWallForce;
     public float snitchAttractModifier;
 
     private GameObject[] enemies;
@@ -32,6 +29,9 @@ public class GriffindorPlayer : MonoBehaviour
 
     private System.Random rng;
 
+    public bool blocking;
+    public bool violent;
+
     
 
 
@@ -39,9 +39,7 @@ public class GriffindorPlayer : MonoBehaviour
     private void Awake()
     {
         player = GetComponent<Rigidbody>();
-        maxRepellEnemyForce = 10f;
-        maxRepellFriendForce = 10f;
-        maxRepellWallForce = 10f;
+
 
     }
     // Start is called before the first frame update
@@ -55,6 +53,8 @@ public class GriffindorPlayer : MonoBehaviour
         wakeUpTime = 0;
         unconsciousTime = 10f;
         rng = new System.Random();
+        blocking = false;
+        violent = true;
     }
 
     // Update is called once per frame
@@ -74,6 +74,14 @@ public class GriffindorPlayer : MonoBehaviour
             RepellWalls();
             RepellEnemies();
             RepellFriends();
+            if (blocking)
+            {
+                Blocking();
+            }
+            if (violent)
+            {
+                Violent();
+            }
 
             if (player.velocity.magnitude > maxSpeed)
             {
@@ -164,7 +172,6 @@ public class GriffindorPlayer : MonoBehaviour
 
     void CheckExhaustion()
     {
-
         if (exhaustCounter > 100 && Time.time > restTime)
         {
             exhaustCounter = 0;
@@ -184,6 +191,28 @@ public class GriffindorPlayer : MonoBehaviour
             exhaustion = 0;
             player.GetComponent<Rigidbody>().useGravity = false;
         }
+    }
+
+    void Violent()
+    {
+        enemies = GameObject.FindGameObjectsWithTag("Slytherin");
+        GameObject closest = null;
+        float distance = Mathf.Infinity;
+        Vector3 position = transform.position;
+        foreach (GameObject enemy in enemies)
+        {
+            Vector3 diff = enemy.transform.position - position;
+            float curDistance = diff.sqrMagnitude;
+            if (curDistance < distance)
+            {
+                closest = enemy;
+                distance = curDistance;
+            }
+        }
+        float dist = Vector3.Distance(transform.position, closest.transform.position);
+        Vector3 dir = (closest.transform.position - transform.position);
+        dir.Normalize();
+        player.AddForce(10 * dir * dist);
     }
 
     public void CollisionUnconscious()
@@ -210,5 +239,48 @@ public class GriffindorPlayer : MonoBehaviour
             Debug.Log("Resting for 15seconds");
         }
     }
+
+
+
+
+    private void Blocking()
+    {
+        enemies = GameObject.FindGameObjectsWithTag("Slytherin");
+        friends = GameObject.FindGameObjectsWithTag("Griffindor");
+
+        GameObject closest = null;
+        float distance = Mathf.Infinity;
+        Vector3 position = transform.position;
+
+
+        foreach (GameObject friend in friends)
+        {
+            if (friend.transform != player.transform)
+            {
+                if ((snitch.transform.position - friend.transform.position).magnitude < (snitch.transform.position - player.transform.position).magnitude) // not the closest on team to snitch
+                {
+                    foreach (GameObject enemy in enemies)
+                    {
+                        Vector3 diff = enemy.transform.position - position;
+                        float curDistance = diff.sqrMagnitude;
+                        if (curDistance < distance)
+                        {
+                            closest = enemy;
+                            distance = curDistance;
+                        }
+                    }
+
+                    float dist = Vector3.Distance(transform.position, closest.transform.position);
+                    Vector3 dir = (closest.transform.position - transform.position);
+                    dir.Normalize();
+                    player.AddForce(dir * dist);
+
+                }
+            }
+        }
+    }
+
+    
+
 
 }

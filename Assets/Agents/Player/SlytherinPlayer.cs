@@ -11,9 +11,6 @@ public class SlytherinPlayer : MonoBehaviour
     public double maxExhaustion;
     public double exhaustion;
 
-    private float maxRepellEnemyForce;
-    private float maxRepellFriendForce;
-    private float maxRepellWallForce;
     public float snitchAttractModifier;
 
     private GameObject[] enemies;
@@ -31,6 +28,9 @@ public class SlytherinPlayer : MonoBehaviour
     private System.Random rng;
 
     public GriffindorPlayer griff;
+
+    public bool blocking;
+    public bool violent;
 
 
 
@@ -51,6 +51,8 @@ public class SlytherinPlayer : MonoBehaviour
         wakeUpTime = 0;
         unconsciousTime = 10f;
         rng = new System.Random();
+        blocking = false;
+        violent = true;
     }
 
     // Update is called once per frame
@@ -71,6 +73,14 @@ public class SlytherinPlayer : MonoBehaviour
             RepellWalls();
             RepellFriends();
             RepellEnemies();
+            if (blocking)
+            {
+                Blocking();
+            }
+            if (violent)
+            {
+                Violent();
+            } 
 
             if (player.velocity.magnitude > maxSpeed)
             {
@@ -78,7 +88,7 @@ public class SlytherinPlayer : MonoBehaviour
             }
             if (Time.time < restTime)
             {
-                player.velocity = Vector3.ClampMagnitude(player.velocity, (float)maxSpeed / 4);
+                player.velocity = Vector3.ClampMagnitude(player.velocity, (float)maxSpeed / 8);
             }
         }
 
@@ -122,7 +132,7 @@ public class SlytherinPlayer : MonoBehaviour
 
     void RepellWalls()
     {
-        // add a repulsive force from each wall that scales with 1/r^2
+        // add a repulsive force from each wall that scales with 1/r
 
         float xPos = -1 / ((25 - player.transform.position.x));
         float xNeg = 1 / ((-25 - player.transform.position.x));
@@ -175,6 +185,29 @@ public class SlytherinPlayer : MonoBehaviour
 
         double y1 = System.Math.Sqrt(-2.0 * System.Math.Log(x1)) * System.Math.Cos(2.0 * System.Math.PI * x2);
         return y1 * stddev + mean;
+    }
+
+    void Violent()
+    {
+        enemies = GameObject.FindGameObjectsWithTag("Slytherin");
+        GameObject closest = null;
+        float distance = Mathf.Infinity;
+        Vector3 position = transform.position;
+        foreach (GameObject enemy in enemies)
+        {
+            Vector3 diff = enemy.transform.position - position;
+            float curDistance = diff.sqrMagnitude;
+            if (curDistance < distance)
+            {
+                closest = enemy;
+                distance = curDistance;
+            }
+        }
+
+        float dist = Vector3.Distance(transform.position, closest.transform.position);
+        Vector3 dir = (closest.transform.position - transform.position);
+        dir.Normalize();
+        player.AddForce(10 * dir * dist);
     }
 
     void CheckEscape()
@@ -233,5 +266,44 @@ public class SlytherinPlayer : MonoBehaviour
             //Debug.Log("Resting for 15seconds");
         }
     }
+
+    void Blocking()
+    {
+        enemies = GameObject.FindGameObjectsWithTag("Griffindor");
+        friends = GameObject.FindGameObjectsWithTag("Slytherin");
+
+        GameObject closest = null;
+        float distance = Mathf.Infinity;
+        Vector3 position = transform.position;
+
+
+        foreach (GameObject friend in friends)
+        {
+            if (friend.transform != player.transform)
+            {
+                if ((snitch.transform.position - friend.transform.position).magnitude < (snitch.transform.position - player.transform.position).magnitude) // not the closest on team to snitch
+                {
+                    foreach (GameObject enemy in enemies)
+                    {
+                        Vector3 diff = enemy.transform.position - position;
+                        float curDistance = diff.sqrMagnitude;
+                        if (curDistance < distance)
+                        {
+                            closest = enemy;
+                            distance = curDistance;
+                        }
+                    }
+
+                    float dist = Vector3.Distance(transform.position, closest.transform.position);
+                    Vector3 dir = (closest.transform.position - transform.position);
+                    dir.Normalize();
+                    player.AddForce(dir * dist);
+
+                }
+            }
+        }
+    }
+
+
 
 }

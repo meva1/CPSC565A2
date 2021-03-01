@@ -22,7 +22,7 @@ public class SnitchBehaviour : MonoBehaviour
         scoreGriffindor = 0;
         scoreSlytherin = 0;
         maxSpeed = 50f;
-        snitch.mass = 0.75f;
+        snitch.mass = 0.5f;
         forceMultiplier = 10f;
         lastPointGriffindor = false;
         lastPointSlytherin = false;
@@ -67,7 +67,7 @@ public class SnitchBehaviour : MonoBehaviour
         float yNeg = 1 / ((0 - snitch.transform.position.y)* (0 - snitch.transform.position.y));
 
         Vector3 forceDir = new Vector3(xPos + xNeg, yPos + yNeg, zPos + zNeg);
-        snitch.AddForce(forceDir);
+        snitch.AddForce(10*forceDir);
     }
 
     void OnCollisionEnter(Collision col)

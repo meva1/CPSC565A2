@@ -7,7 +7,7 @@ public class TimeControl : MonoBehaviour
      
 {
 
-    [Range(0.1f, 10)]
+    [Range(0.1f, 30)]
     public float newTimeScale;
     // Start is called before the first frame update
     void Start()

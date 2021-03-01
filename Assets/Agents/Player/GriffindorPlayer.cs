@@ -98,6 +98,7 @@ public class GriffindorPlayer : MonoBehaviour
 
     void OnCollisionEnter(Collision col)
     {
+        double rand;
         if (col.gameObject.tag == "Griffindor")
         {
             Debug.Log("Griffindor on Griffindor Violence");

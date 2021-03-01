@@ -22,11 +22,17 @@ public class GriffindorPlayer : MonoBehaviour
     private GameObject[] friends;
     private GameObject[] snitchTag;
 
-    private bool unconscious;
+    public bool unconscious;
     private int exhaustCounter;
+    private int restCounter;
+    private float restTime;
 
     private float wakeUpTime;
     private float unconsciousTime;
+
+    private System.Random rng;
+
+    
 
 
 
@@ -48,6 +54,7 @@ public class GriffindorPlayer : MonoBehaviour
         exhaustCounter = 0;
         wakeUpTime = 0;
         unconsciousTime = 10f;
+        rng = new System.Random();
     }
 
     // Update is called once per frame
@@ -56,6 +63,9 @@ public class GriffindorPlayer : MonoBehaviour
         CheckExhaustion();
         if (!unconscious)
         {
+            Rest();
+            exhaustCounter++;
+            restCounter++;
             float dist = Vector3.Distance(transform.position, snitch.transform.position);
             Vector3 dir = (snitch.transform.position - transform.position);
             dir.Normalize();
@@ -68,6 +78,10 @@ public class GriffindorPlayer : MonoBehaviour
             if (player.velocity.magnitude > maxSpeed)
             {
                 player.velocity = Vector3.ClampMagnitude(player.velocity, (float)maxSpeed);
+            }
+            if(Time.time < restTime)
+            {
+                player.velocity = Vector3.ClampMagnitude(player.velocity, (float)maxSpeed/4);
             }
         }
 
@@ -108,7 +122,7 @@ public class GriffindorPlayer : MonoBehaviour
             Vector3 dir = (transform.position - enemy.transform.position );
             dir.Normalize();
             //dir = maxRepellEnemyForce*dir;
-            player.AddForce(dir);
+            player.AddForce(5*dir);
         }
     }
 
@@ -151,22 +165,49 @@ public class GriffindorPlayer : MonoBehaviour
     void CheckExhaustion()
     {
 
-        if (exhaustCounter > 100)
+        if (exhaustCounter > 100 && Time.time > restTime)
         {
             exhaustCounter = 0;
             exhaustion++;
         }
+        /*
         if (!unconscious && exhaustion > maxExhaustion)
         {
             unconscious = true;
             player.GetComponent<Rigidbody>().useGravity = true;
             wakeUpTime = Time.time + unconsciousTime;
         }
+        */
         if (unconscious && Time.time > wakeUpTime)
         {
             unconscious = false;
             exhaustion = 0;
             player.GetComponent<Rigidbody>().useGravity = false;
+        }
+    }
+
+    public void CollisionUnconscious()
+    {
+        unconscious = true;
+        wakeUpTime = Time.time + unconsciousTime;
+        Debug.Log("collision caused unconscious");
+        player.GetComponent<Rigidbody>().useGravity = true;
+    }
+
+    void Rest()
+    {
+        if(Time.time < restTime)
+        {
+            if(restCounter > 100)
+            {
+                restCounter = 0;
+                exhaustion--;
+            }
+        }
+        if(exhaustion > maxExhaustion)
+        {
+            restTime = Time.time + 15;
+            Debug.Log("Resting for 15seconds");
         }
     }
 

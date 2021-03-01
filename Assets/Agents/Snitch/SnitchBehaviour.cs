@@ -10,8 +10,10 @@ public class SnitchBehaviour : MonoBehaviour
     public int scoreGriffindor;
     public int scoreSlytherin;
     private System.Random rng;
-    private double meanMass;
-    private double stddevMass;
+    public float forceMultiplier;
+    public bool lastPointGriffindor;
+    public bool lastPointSlytherin;
+
 
     void Awake()
     {
@@ -20,7 +22,10 @@ public class SnitchBehaviour : MonoBehaviour
         scoreGriffindor = 0;
         scoreSlytherin = 0;
         maxSpeed = 50f;
-        snitch.mass = 3f;
+        snitch.mass = 0.75f;
+        forceMultiplier = 10f;
+        lastPointGriffindor = false;
+        lastPointSlytherin = false;
 
     }
 
@@ -37,6 +42,7 @@ public class SnitchBehaviour : MonoBehaviour
         
         Vector3 forceDir = new Vector3((float)rng.NextDouble()*2-1, (float)rng.NextDouble()*2-1, (float)rng.NextDouble()*2-1);
         snitch.AddForce(forceDir);
+        //Debug.Log(forceDir);
 
         RepellWalls();
 
@@ -68,28 +74,41 @@ public class SnitchBehaviour : MonoBehaviour
     {
         if (col.gameObject.tag == "Griffindor")
         {
-            scoreGriffindor += 1;
-            Debug.Log("Griffindor");
+            if (lastPointGriffindor)
+            {
+                scoreGriffindor += 2;
+            }
+            else
+            {
+                scoreGriffindor += 1;
+            }
+            Debug.Log("Point for Griffindor");
+            lastPointGriffindor = true;
+            lastPointSlytherin = false;
+            snitch.transform.position = new Vector3(0, 12.5f, 0);
         }
         else if (col.gameObject.tag == "Slytherin")
         {
-            scoreSlytherin += 1;
+            if (lastPointSlytherin)
+            {
+                scoreSlytherin += 2;
+            }
+            else
+            {
+                scoreSlytherin += 1;
+            }
+            lastPointGriffindor = false;
+            lastPointSlytherin = true;
             Debug.Log("Slytherin");
+            snitch.transform.position = new Vector3(0, 12.5f, 0);
         }
         else
         {
-            Debug.Log("Wall collision");
+            //Debug.Log("Wall collision");
         }
     }
 
-    double SampleGaussian(System.Random rng, double mean, double stddev)
-    {
-        // The method requires sampling from a uniform random of (0,1]
-        // but Random.NextDouble() returns a sample of [0,1).
-        double x1 = 1 - rng.NextDouble();
-        double x2 = 1 - rng.NextDouble();
 
-        double y1 = System.Math.Sqrt(-2.0 * System.Math.Log(x1)) * System.Math.Cos(2.0 * System.Math.PI * x2);
-        return y1 * stddev + mean;
-    }
+
+    
 }

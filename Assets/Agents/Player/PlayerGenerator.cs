@@ -44,8 +44,8 @@ public class PlayerGenerator : MonoBehaviour
     {
         rng = new System.Random();
 
-        slytherinStartPoint = new Vector3(-20, 0.1f, 0);
-        griffindorStartPoint = new Vector3(20, 0.1f, 0);
+        slytherinStartPoint = new Vector3(0, 0.1f, 5);
+        griffindorStartPoint = new Vector3(0, 0.1f, -5);
 
         numPlayers = 7;
         sMeanWeight = 85;
@@ -95,10 +95,12 @@ public class PlayerGenerator : MonoBehaviour
 
     void CreateGriffindor()
     {
+        float spawnPointX;
         teamGriffindor = new List<GameObject>();
         for (int i = 0; i < numPlayers; i++)
         {
-            GameObject griff = Instantiate(GriffindorPlayer, griffindorStartPoint, Quaternion.identity);
+            spawnPointX = griffindorStartPoint.x + i; 
+            GameObject griff = Instantiate(GriffindorPlayer, griffindorStartPoint+new Vector3(spawnPointX,0f,0f), Quaternion.identity);
             rig = griff.GetComponent<Rigidbody>();
             rig.mass = (float)SampleGaussian(rng, gMeanWeight, gStddevWeight);
             GriffindorPlayer stats = griff.GetComponent<GriffindorPlayer>();
@@ -113,10 +115,12 @@ public class PlayerGenerator : MonoBehaviour
 
     void CreateSlytherin()
     {
+        float spawnPointX;
         teamSlytherin = new List<GameObject>();
         for (int i = 0; i < numPlayers; i++)
         {
-            GameObject sly = Instantiate(SlytherinPlayer, slytherinStartPoint, Quaternion.identity);
+            spawnPointX = slytherinStartPoint.x + i;
+            GameObject sly = Instantiate(SlytherinPlayer, slytherinStartPoint+ new Vector3(spawnPointX,0f,0f), Quaternion.identity);
             rig = sly.GetComponent<Rigidbody>();
             rig.mass = (float)SampleGaussian(rng, sMeanWeight, sStddevWeight);
             SlytherinPlayer stats = sly.GetComponent<SlytherinPlayer>();

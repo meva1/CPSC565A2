@@ -20,11 +20,17 @@ public class SlytherinPlayer : MonoBehaviour
     private GameObject[] friends;
     private GameObject[] snitchTag;
 
-    private bool unconscious;
+    public bool unconscious;
     private int exhaustCounter;
+    private int restCounter;
+    private float restTime;
 
     private float wakeUpTime;
     private float unconsciousTime;
+
+    private System.Random rng;
+
+    public GriffindorPlayer griff;
 
 
 
@@ -44,6 +50,7 @@ public class SlytherinPlayer : MonoBehaviour
         exhaustCounter = 0;
         wakeUpTime = 0;
         unconsciousTime = 10f;
+        rng = new System.Random();
     }
 
     // Update is called once per frame
@@ -53,6 +60,8 @@ public class SlytherinPlayer : MonoBehaviour
         CheckExhaustion();
         if (!unconscious)
         {
+            Rest();
+            restCounter++;
             exhaustCounter++;
             float dist = Vector3.Distance(transform.position, snitch.transform.position);
             Vector3 dir = (snitch.transform.position - transform.position);
@@ -67,6 +76,10 @@ public class SlytherinPlayer : MonoBehaviour
             {
                 player.velocity = Vector3.ClampMagnitude(player.velocity, (float)maxSpeed);
             }
+            if (Time.time < restTime)
+            {
+                player.velocity = Vector3.ClampMagnitude(player.velocity, (float)maxSpeed / 4);
+            }
         }
 
         //CheckEscape();
@@ -76,17 +89,34 @@ public class SlytherinPlayer : MonoBehaviour
 
     void OnCollisionEnter(Collision col)
     {
-        if (col.gameObject.name == "snitch")
+        double rand;
+        double player1Value;
+        double player2Value;
+        if(col.gameObject.tag == "Slytherin")
         {
-            player.transform.position = new Vector3(-5, 2, -5);
+            Debug.Log("Slytherin on Slytherin Violence");
+            rand = rng.NextDouble();
+            if(rand >= 0.25)
+            {
+                CollisionUnconscious();
+            }
+
         }
-        else if(col.gameObject.name == "SlytherinPlayer")
+        else if(col.gameObject.tag == "Griffindor")
         {
-            //Debug.Log("Slytherin on Slytherin Violence");
-        }
-        else
-        {
-            //Debug.Log("Slytherin on Griffindor Violence");
+            Debug.Log("Slytherin on Griffindor Violence");
+            player1Value = aggressiveness * (rng.NextDouble() * (1.2 - 0.8) + 0.8) * (1 - (exhaustion / maxExhaustion));
+            griff = col.gameObject.GetComponent<GriffindorPlayer>();
+            player2Value = griff.aggressiveness * (rng.NextDouble() * (1.2 - 0.8) + 0.8) * (1 - (griff.exhaustion / griff.maxExhaustion));
+            if(player1Value < player2Value)
+            {
+                CollisionUnconscious();
+            }
+            else
+            {
+                griff.CollisionUnconscious();
+            }
+
         }
     }
 
@@ -131,7 +161,7 @@ public class SlytherinPlayer : MonoBehaviour
                 float dist = Vector3.Distance(transform.position, enemy.transform.position);
                 Vector3 dir = (transform.position - enemy.transform.position);
                 dir.Normalize();
-                player.AddForce(dir);
+                player.AddForce(5*dir);
             
         }
     }
@@ -158,21 +188,49 @@ public class SlytherinPlayer : MonoBehaviour
     void CheckExhaustion()
     {
         
-        if(exhaustCounter > 100)
+        if(exhaustCounter > 100 && Time.time > restTime)
         {
             exhaustCounter = 0;
             exhaustion++;
         }
+        /*
         if(!unconscious && exhaustion > maxExhaustion)
         {
             unconscious = true;
             player.GetComponent<Rigidbody>().useGravity = true;
             wakeUpTime = Time.time + unconsciousTime;
         }
+        */
         if(unconscious && Time.time > wakeUpTime){
             unconscious = false;
             exhaustion = 0;
             player.GetComponent<Rigidbody>().useGravity = false;
+        }
+    }
+
+    public void CollisionUnconscious()
+    {
+        unconscious = true;
+        wakeUpTime = Time.time + unconsciousTime;
+        Debug.Log("collision caused unconscious");
+        player.GetComponent<Rigidbody>().useGravity = true;
+    }
+
+    void Rest()
+    {
+        if (Time.time < restTime)
+        {
+            if (restCounter > 100)
+            {
+                //Debug.Log("exhaustion removal");
+                restCounter = 0;
+                exhaustion--;
+            }
+        }
+        if (exhaustion > maxExhaustion)
+        {
+            restTime = Time.time + 15;
+            //Debug.Log("Resting for 15seconds");
         }
     }
 
